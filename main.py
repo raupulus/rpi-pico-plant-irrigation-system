@@ -9,7 +9,10 @@ controller.ledOn()
 WATER_PUMP = Pin(12, Pin.OUT)
 WATER_SENSOR = Pin(8, Pin.IN)
 
-TIMEOUT_WATER_IRRIGATION = 3 # Tiempo de riego en segundos.
+TIMEOUT_WATER_IRRIGATION = 5 # Tiempo de riego en segundos.
+SOIL_MOSTURE_SENSOR1_MIN_VOLTAJE = 2 # Valor mínimo de voltaje para activar motor de riego.
+SOIL_MOSTURE_SENSOR2_MIN_VOLTAJE = 2 # Valor mínimo de voltaje para activar motor de riego.
+
 
 def check_water():
     return bool(WATER_SENSOR.value())
@@ -18,9 +21,9 @@ def soil_moisture_correct():
     soil_read_1 = controller.readAnalogInput(28)
     #soil_read_2 = controller.readAnalogInput(26)
     #print(soil_read_1, soil_read_2)
-    print(soil_read_1)
+    print('Soil 1:', soil_read_1)
 
-    if soil_read_1 < 2:
+    if soil_read_1 > SOIL_MOSTURE_SENSOR2_MIN_VOLTAJE:
         return False
 
     return True
@@ -46,9 +49,12 @@ def loop():
     controller.ledOff()
     sleep(1)
 
+it = 0
 
 while True:
     try:
+        it += 1
+        print('Iteración:', it)
         loop()
     except Exception as e:
         print('Error en el loop', e)
